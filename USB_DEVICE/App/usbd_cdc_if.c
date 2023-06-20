@@ -22,7 +22,7 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include <stdio.h>
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,6 +49,12 @@
   */
 
 /* USER CODE BEGIN PRIVATE_TYPES */
+typedef struct _lineCoding_t {
+	uint32_t dwDTERate;
+	uint8_t bCharFormat;
+	uint8_t bParityType;
+	uint8_t bDataBits;
+} lineCoding_t;
 
 /* USER CODE END PRIVATE_TYPES */
 
@@ -62,6 +68,14 @@
   */
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
+static lineCoding_t lineCodingRec = {
+		/* dwDTERate 300 Baud*/ 300U,
+		/* bCharFormat 1 Stop bit*/ 1,
+		/* bParityType Even parity */ 2,
+		/* bDataBits */ 8
+};
+
+
 /* USER CODE END PRIVATE_DEFINES */
 
 /**
@@ -221,9 +235,28 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   /*******************************************************************************/
     case CDC_SET_LINE_CODING:
 
+    	printf("CDC_Control_FS: CDC_SET_LINE_CODING, length = %hu\r\n",length);
+    	if (length >= 7) {
+    		lineCodingRec = *((lineCoding_t*) pbuf);
+    		printf ("DataRate=%lu, stop bits=%lu, parity=%lu,data bits=%lu\r\n",
+    				lineCodingRec.dwDTERate,
+					(uint32_t)lineCodingRec.bCharFormat,
+					(uint32_t)lineCodingRec.bParityType,
+					(uint32_t)lineCodingRec.bDataBits);
+    	}
+
     break;
 
     case CDC_GET_LINE_CODING:
+    	printf("CDC_Control_FS: CDC_GET_LINE_CODING, length = %hu\r\n",length);
+    	if (length >= 7) {
+    		*((lineCoding_t*) pbuf) = lineCodingRec;
+    		printf ("DataRate=%lu, stop bits=%lu, parity=%lu,data bits=%lu\r\n",
+    				lineCodingRec.dwDTERate,
+					(uint32_t)lineCodingRec.bCharFormat,
+					(uint32_t)lineCodingRec.bParityType,
+					(uint32_t)lineCodingRec.bDataBits);
+    	}
 
     break;
 
@@ -261,6 +294,7 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
+  printf("CDC_Receive_FS received %lu bytes: \"%.*s\"",*Len,(int)*Len,Buf);
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);
