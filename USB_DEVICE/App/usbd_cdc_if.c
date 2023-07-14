@@ -167,6 +167,7 @@ static int8_t CDC_Init_FS(void)
 {
   /* USER CODE BEGIN 3 */
   /* Set Application Buffers */
+  printf("CDC_Init_FS() called\n");
   USBD_CDC_SetTxBuffer(&hUsbDeviceFS, UserTxBufferFS, 0);
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, UserRxBufferFS);
   return (USBD_OK);
@@ -180,6 +181,7 @@ static int8_t CDC_Init_FS(void)
 static int8_t CDC_DeInit_FS(void)
 {
   /* USER CODE BEGIN 4 */
+  printf("CDC_DeInit_FS() called\n");
   return (USBD_OK);
   /* USER CODE END 4 */
 }
@@ -197,22 +199,27 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   switch(cmd)
   {
     case CDC_SEND_ENCAPSULATED_COMMAND:
+    	  printf("CDC_Control_FS() CDC_SEND_ENCAPSULATED_COMMAND\n");
 
     break;
 
     case CDC_GET_ENCAPSULATED_RESPONSE:
+  	  printf("CDC_Control_FS() CDC_GET_ENCAPSULATED_RESPONSE\n");
 
     break;
 
     case CDC_SET_COMM_FEATURE:
+    	  printf("CDC_Control_FS() CDC_SET_COMM_FEATURE\n");
 
     break;
 
     case CDC_GET_COMM_FEATURE:
+  	  printf("CDC_Control_FS() CDC_GET_COMM_FEATURE\n");
 
     break;
 
     case CDC_CLEAR_COMM_FEATURE:
+    	  printf("CDC_Control_FS() CDC_CLEAR_COMM_FEATURE\n");
 
     break;
 
@@ -261,12 +268,15 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
     break;
 
     case CDC_SET_CONTROL_LINE_STATE:
+  	  printf("CDC_Control_FS() CDC_SET_CONTROL_LINE_STATE\n");
 
     break;
 
     case CDC_SEND_BREAK:
+  	  printf("CDC_Control_FS() CDC_SEND_BREAK\n");
 
     break;
+	  printf("CDC_Control_FS() unknown code %d\n",(int)cmd);
 
   default:
     break;
@@ -345,6 +355,8 @@ static int8_t CDC_TransmitCplt_FS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
   UNUSED(Buf);
   UNUSED(Len);
   UNUSED(epnum);
+
+  printf("CDC_TransmitCplt_FS called; len=%lu, epnum=%u\n",*Len,(unsigned int)epnum);
   /* USER CODE END 13 */
   return result;
 }

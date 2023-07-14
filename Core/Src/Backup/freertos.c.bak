@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +50,7 @@ typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
-uint32_t defaultTaskBuffer[ 128 ];
+uint32_t defaultTaskBuffer[ 256 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
@@ -123,10 +123,55 @@ void StartDefaultTask(void *argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
+  static char* str =
+		  "1234567890"
+		  "1234567890"
+		  "1234567890"
+		  "1234567890"
+		  "1234567890"
+		  "1234567890"
+		  "1234567890";
   /* Infinite loop */
+
   for(;;)
   {
-    osDelay(1);
+    unsigned int rc;
+
+    rc = CDC_Transmit_FS((uint8_t*) str, 63);
+    printf ("Transmit len = 63, rc = %u\n", rc);
+    osDelay(500);
+    rc = CDC_Transmit_FS((uint8_t*) "xx\r\n", 4);
+    printf ("Transmit len = 4, rc = %u\n", rc);
+
+    osDelay(2000);
+    rc = CDC_Transmit_FS((uint8_t*) str, 64);
+    printf ("Transmit len = 64, rc = %u\n", rc);
+    osDelay(500);
+    rc = CDC_Transmit_FS((uint8_t*) "xx\r\n", 4);
+    printf ("Transmit len = 4, rc = %u\n", rc);
+
+    osDelay(2000);
+    rc = CDC_Transmit_FS((uint8_t*) str, 64);
+    printf ("Transmit len = 64, rc = %u\n", rc);
+    rc = USBD_BUSY;
+    while (rc == USBD_BUSY) {
+        osDelay(1);
+    	rc = CDC_Transmit_FS((uint8_t*) str, 0);
+    	printf ("Transmit len = 0, rc = %u\n", rc);
+    }
+    osDelay(500);
+    rc = CDC_Transmit_FS((uint8_t*) "xx\r\n", 4);
+    printf ("Transmit len = 4, rc = %u\n", rc);
+
+    osDelay(2000);
+    rc = CDC_Transmit_FS((uint8_t*) str, 65);
+    printf ("Transmit len = 65, rc = %u\n", rc);
+    osDelay(500);
+    rc = CDC_Transmit_FS((uint8_t*) "xx\r\n", 4);
+    printf ("Transmit len = 4, rc = %u\n", rc);
+
+    osDelay(5000);
+
   }
   /* USER CODE END StartDefaultTask */
 }
