@@ -132,7 +132,6 @@ void StartDefaultTask(void *argument)
 		  "1234567890"
 		  "1234567890";
   /* Infinite loop */
-
   for(;;)
   {
     unsigned int rc;
