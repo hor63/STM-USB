@@ -53,3 +53,6 @@ dkms.conf
 
 # Build directories
 Debug
+
+#Backups by the code generator
+Backup/
