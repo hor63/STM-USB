@@ -26,6 +26,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usbd_cdc_if.h"
+
+#include <stdio.h>
+#include <sys/lock.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -83,6 +86,15 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
+	if (!stdout->_lock) {
+		__lock_init_recursive(stdout->_lock);
+	}
+	if (!stdin->_lock) {
+		__lock_init_recursive(stdin->_lock);
+	}
+	if (!stderr->_lock) {
+		__lock_init_recursive(stderr->_lock);
+	}
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -131,6 +143,19 @@ void StartDefaultTask(void *argument)
 		  "1234567890"
 		  "1234567890"
 		  "1234567890";
+  osDelay(500);
+	if (!stdout->_lock) {
+		__lock_init_recursive(stdout->_lock);
+	}
+	if (!stdin->_lock) {
+		__lock_init_recursive(stdin->_lock);
+	}
+	if (!stderr->_lock) {
+		__lock_init_recursive(stderr->_lock);
+	}
+
+  printf ("hello world!\n");
+
   /* Infinite loop */
   for(;;)
   {
