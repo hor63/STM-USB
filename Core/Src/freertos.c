@@ -25,6 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
 #include <stdio.h>
 #include <sys/lock.h>
 /* USER CODE END Includes */
@@ -133,16 +134,6 @@ void StartDefaultTask(void *argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
-  osDelay(500);
-	if (!stdout->_lock) {
-		__lock_init_recursive(stdout->_lock);
-	}
-	if (!stdin->_lock) {
-		__lock_init_recursive(stdin->_lock);
-	}
-	if (!stderr->_lock) {
-		__lock_init_recursive(stderr->_lock);
-	}
 
   printf ("Hello world!\n");
 
@@ -150,9 +141,7 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
     osDelay(2000);
-
     printf ("Hello again\n");
-
   }
   /* USER CODE END StartDefaultTask */
 }

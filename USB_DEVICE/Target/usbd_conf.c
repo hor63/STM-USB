@@ -16,6 +16,12 @@
   *
   ******************************************************************************
   */
+
+/* Replace the CDC header with the cdc_rndis header.
+ *
+ * Use user sections above and below to avoid it being wiped out on re-generation
+ */
+#if 0
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -26,6 +32,13 @@
 #include "usbd_cdc.h"
 
 /* USER CODE BEGIN Includes */
+#endif
+
+#include "stm32l4xx.h"
+#include "stm32l4xx_hal.h"
+#include "usbd_def.h"
+#include "usbd_core.h"
+#include "usbd_cdc_rndis.h"
 
 /* USER CODE END Includes */
 
@@ -36,6 +49,12 @@
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
+/*
+ * Cheat the generated code.
+ * Rename USBD_CDC_HandleTypeDef to USBD_CDC_RNDIS_HandleTypeDef to provide the correct size of
+ * the static array.
+ */
+#define USBD_CDC_HandleTypeDef USBD_CDC_RNDIS_HandleTypeDef
 /* USER CODE END PV */
 
 PCD_HandleTypeDef hpcd_USB_FS;

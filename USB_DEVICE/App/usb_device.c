@@ -16,6 +16,9 @@
   *
   ******************************************************************************
   */
+
+/* replace CDC-ACM includes with the CDC-RNDIS includes */
+#if 0
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -27,6 +30,13 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN Includes */
+#endif
+
+#include "usb_device.h"
+#include "usbd_core.h"
+// #include "usbd_desc.h"
+#include "usbd_cdc_rndis.h"
+#include "usbd_cdc_rndis_if.h"
 
 /* USER CODE END Includes */
 
@@ -66,6 +76,7 @@ void MX_USB_DEVICE_Init(void)
 {
   /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
 
+#if 0
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
 
   /* Init Device Library, add supported class and start the library. */
@@ -86,6 +97,23 @@ void MX_USB_DEVICE_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
+#endif
+  if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK)
+  {
+    Error_Handler();
+  }
+  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC_RNDIS) != USBD_OK)
+  {
+    Error_Handler();
+  }
+  if (USBD_CDC_RNDIS_RegisterInterface(&hUsbDeviceFS, &USBD_CDC_RNDIS_fops) != USBD_OK)
+  {
+    Error_Handler();
+  }
+  if (USBD_Start(&hUsbDeviceFS) != USBD_OK)
+  {
+    Error_Handler();
+  }
 
   /* USER CODE END USB_DEVICE_Init_PostTreatment */
 }
