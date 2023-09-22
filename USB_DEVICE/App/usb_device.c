@@ -76,6 +76,22 @@ void MX_USB_DEVICE_Init(void)
 {
   /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
 
+	  /* Obtain the device descriptor and set bDeviceClass and bDeviceSubClass to 0.
+	   * CubeMX sets the class and subclass fixed to CDC-ACM on device level. This supersedes the class and subclass definition as RNDIS
+	   * in the interface descrioptor.
+	   * Setting the class and subclass in the device descriptor to 0 lets the class/subclass definition in the interface descrioptor becoming
+	   * effective.
+	   */
+	  uint16_t lenDeviceDescr = 0;
+	  uint8_t * deviceDescr = FS_Desc.GetDeviceDescriptor(USBD_SPEED_FULL,&lenDeviceDescr);
+	  deviceDescr[4] = 0; /*bDeviceClass*/
+	  deviceDescr[5] = 0; /*bDeviceSubClass*/
+
+/*
+ * Replace the CubeMX generated initialization sequence in the User code section "USB_DEVICE_Init_PostTreatment" below.
+ * Make the generated sequence invisible to the compiler.
+ * My sequence below initializes the USB device with the RNDIS descriptor and RNDIS interface fops.
+ */
 #if 0
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
 
@@ -98,6 +114,8 @@ void MX_USB_DEVICE_Init(void)
   }
   /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
 #endif
+
+
   if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK)
   {
     Error_Handler();
