@@ -84,30 +84,10 @@
 /*
  * IPV6
  */
-// For the time being I am going without
-#define 	LWIP_IPV6   0
 
-#define 	IPV6_REASS_MAXAGE   60
+#define 	LWIP_IPV6   1
 
-#define 	LWIP_IPV6_SCOPES   (LWIP_IPV6 && !LWIP_SINGLE_NETIF)
-
-#define 	LWIP_IPV6_SCOPES_DEBUG   0
-
-#define 	LWIP_IPV6_NUM_ADDRESSES   3
-
-#define 	LWIP_IPV6_FORWARD   0
-
-#define 	LWIP_IPV6_FRAG   1
-
-#define 	LWIP_IPV6_REASS   LWIP_IPV6
-
-#define 	LWIP_IPV6_SEND_ROUTER_SOLICIT   1
-
-#define 	LWIP_IPV6_AUTOCONFIG   LWIP_IPV6
-
-#define 	LWIP_IPV6_ADDRESS_LIFETIMES   LWIP_IPV6_AUTOCONFIG
-
-#define 	LWIP_IPV6_DUP_DETECT_ATTEMPTS   1
+#define     LWIP_IPV6_DHCP6   1
 
 /* *****************************************************************************
  * Callback-style APIs
@@ -160,38 +140,9 @@
 
 #define 	LWIP_SOCKET   1
 
-#define 	LWIP_COMPAT_SOCKETS   1
+#define     LWIP_POSIX_SOCKETS_IO_NAMES   0
 
-#define 	LWIP_POSIX_SOCKETS_IO_NAMES   0
-
-#define 	LWIP_SOCKET_OFFSET   0
-
-#define 	LWIP_TCP_KEEPALIVE   0
-
-#define 	LWIP_SO_SNDTIMEO   0
-
-#define 	LWIP_SO_RCVTIMEO   0
-
-#define 	LWIP_SO_SNDRCVTIMEO_NONSTANDARD   0
-
-#define 	LWIP_SO_RCVBUF   0
-
-#define 	LWIP_SO_LINGER   0
-
-#define 	RECV_BUFSIZE_DEFAULT   INT_MAX
-
-#define 	LWIP_TCP_CLOSE_TIMEOUT_MS_DEFAULT   20000
-
-#define 	SO_REUSE   0
-
-#define 	SO_REUSE_RXTOALL   0
-
-#define 	LWIP_FIONREAD_LINUXMODE   0
-
-#define 	LWIP_SOCKET_SELECT   1
-
-#define 	LWIP_SOCKET_POLL   1
-
+#define     LWIP_TCP_KEEPALIVE   1
 /*
  * SNMP MIB2 callbacks
  */
@@ -222,33 +173,18 @@
 
 #define 	DEFAULT_THREAD_PRIO   1
 
+#define     SLIPIF_THREAD_STACKSIZE   (configMINIMAL_STACK_SIZE * 2)
+
+#define     DEFAULT_RAW_RECVMBOX_SIZE   4
+
+#define     DEFAULT_UDP_RECVMBOX_SIZE   4
+
+#define     DEFAULT_TCP_RECVMBOX_SIZE   6
+
+#define     DEFAULT_ACCEPTMBOX_SIZE   2
 /*
  * Checksum
  */
-
-#define 	LWIP_CHECKSUM_CTRL_PER_NETIF   0
-
-#define 	CHECKSUM_GEN_IP   1
-
-#define 	CHECKSUM_GEN_UDP   1
-
-#define 	CHECKSUM_GEN_TCP   1
-
-#define 	CHECKSUM_GEN_ICMP   1
-
-#define 	CHECKSUM_GEN_ICMP6   1
-
-#define 	CHECKSUM_CHECK_IP   1
-
-#define 	CHECKSUM_CHECK_UDP   1
-
-#define 	CHECKSUM_CHECK_TCP   1
-
-#define 	CHECKSUM_CHECK_ICMP   1
-
-#define 	CHECKSUM_CHECK_ICMP6   1
-
-#define 	LWIP_CHECKSUM_ON_COPY   0
 
 /*
  * Hooks
