@@ -204,6 +204,8 @@
 
 #define 	MEM_ALIGNMENT   4
 
+#define MEM_SIZE                        16000
+
 /*
  * Internal memory pools
  */
