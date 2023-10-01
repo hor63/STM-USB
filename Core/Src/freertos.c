@@ -62,6 +62,18 @@ const osThreadAttr_t defaultTask_attributes = {
   .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for taskUSBReceive */
+osThreadId_t taskUSBReceiveHandle;
+uint32_t taskUSBReceiveBuffer[ 256 ];
+osStaticThreadDef_t taskUSBReceiveControlBlock;
+const osThreadAttr_t taskUSBReceive_attributes = {
+  .name = "taskUSBReceive",
+  .cb_mem = &taskUSBReceiveControlBlock,
+  .cb_size = sizeof(taskUSBReceiveControlBlock),
+  .stack_mem = &taskUSBReceiveBuffer[0],
+  .stack_size = sizeof(taskUSBReceiveBuffer),
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -69,6 +81,7 @@ const osThreadAttr_t defaultTask_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void StartTaskUSBReceive(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -112,6 +125,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
+  /* creation of taskUSBReceive */
+  taskUSBReceiveHandle = osThreadNew(StartTaskUSBReceive, NULL, &taskUSBReceive_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -144,6 +160,24 @@ void StartDefaultTask(void *argument)
     printf ("Hello again\n");
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartTaskUSBReceive */
+/**
+* @brief Function implementing the taskUSBReceive thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTaskUSBReceive */
+void StartTaskUSBReceive(void *argument)
+{
+  /* USER CODE BEGIN StartTaskUSBReceive */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartTaskUSBReceive */
 }
 
 /* Private application code --------------------------------------------------*/
