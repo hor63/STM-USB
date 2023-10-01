@@ -42,8 +42,10 @@
 /* Max Number of Trials waiting for Tx ready */
 #define CDC_RNDIS_MAX_TX_WAIT_TRIALS           1000000U
 
+/* IP frame (without ethernet header) */
+#define CDC_RNDIS_ETH_MTU									1500U
 /* Ethernet Maximum Segment size, typically 1514 bytes */
-#define CDC_RNDIS_ETH_MAX_SEGSZE                            1514U
+#define CDC_RNDIS_ETH_MAX_SEGSZE                            (CDC_RNDIS_ETH_MTU+14U)
 
 #define CDC_RNDIS_CONNECT_SPEED_UPSTREAM                    0x1E000000U
 #define CDC_RNDIS_CONNECT_SPEED_DOWNSTREAM                  0x1E000000U
