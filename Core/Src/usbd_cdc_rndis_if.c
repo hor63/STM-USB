@@ -19,16 +19,13 @@
 /* Includes ------------------------------------------------------------------*/
 
 /* Include TCP/IP stack header files */
-/*
+
 #include "lwip/opt.h"
 #include "lwip/init.h"
-#include "lwip/dhcp.h"
 #include "lwip/netif.h"
-#include "lwip/timeouts.h"
+#include "netif/ethernet.h"
 #include "netif/etharp.h"
-#include "http_cgi_ssi.h"
-#include "ethernetif.h"
-*/
+
 
 #include <stdio.h>
 #include "usbd_cdc_rndis_if.h"
@@ -37,6 +34,12 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
+/* The netif representing the RNDIS interface
+ *
+ */
+static struct netif rndisIF;
+
 /* Received Data over USB are stored in this buffer */
 #if defined ( __ICCARM__ ) /*!< IAR Compiler */
 #pragma data_alignment=4
@@ -78,6 +81,50 @@ USBD_CDC_RNDIS_ItfTypeDef USBD_CDC_RNDIS_fops =
 
 /* Private functions ---------------------------------------------------------*/
 
+
+static  err_t CDC_RNDIS_Itf_SendEthFrame (struct netif *netif, struct pbuf *p) {
+
+#warning Fill with code
+
+	return (err_t)ERR_OK;
+}
+
+static err_t ethernetif_init(struct netif *netif)
+{
+  LWIP_ASSERT("netif != NULL", (netif != NULL));
+
+  netif->name[0] = 'K';
+  netif->name[1] = 'H';
+
+  /* We directly use etharp_output() here to save a function call.
+   * You can instead declare your own function an call etharp_output()
+   * from it if you have to do some checks before sending (e.g. if link
+   * is available...) */
+  netif->output = etharp_output;
+  netif->linkoutput = CDC_RNDIS_Itf_SendEthFrame;
+
+  /* initialize the hardware */
+  /* set MAC hardware address length */
+  netif->hwaddr_len = ETH_HWADDR_LEN;
+
+  /* Set MAC hardware address */
+  netif->hwaddr[0] =  CDC_RNDIS_MAC_ADDR0;
+  netif->hwaddr[1] =  CDC_RNDIS_MAC_ADDR1;
+  netif->hwaddr[2] =  CDC_RNDIS_MAC_ADDR2;
+  netif->hwaddr[3] =  CDC_RNDIS_MAC_ADDR3;
+  netif->hwaddr[4] =  CDC_RNDIS_MAC_ADDR4;
+  netif->hwaddr[5] =  CDC_RNDIS_MAC_ADDR5;
+
+  /* maximum transfer unit */
+  netif->mtu = CDC_RNDIS_ETH_MTU;
+
+  /* device capabilities */
+  /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
+  netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
+
+  return (err_t)ERR_OK;
+}
+
 /**
   * @brief  CDC_RNDIS_Itf_Init
   *         Initializes the CDC_RNDIS media low layer
@@ -90,9 +137,14 @@ static int8_t CDC_RNDIS_Itf_Init(void)
   {
     /*
       Initialize the LwIP stack
-      Add your code here
-
     */
+
+	  lwip_init();
+
+	  netif_init();
+
+	  memset (&rndisIF,0,sizeof(rndisIF));
+	  netif_add_noaddr(&rndisIF, NULL, ethernetif_init, ethernet_input);
 
     CDC_RNDISInitialized = 1U;
   }
@@ -214,10 +266,15 @@ static int8_t CDC_RNDIS_Itf_Receive(uint8_t *Buf, uint32_t *Len)
     /* Reset the Rx buffer pointer to origin */
   (void) USBD_CDC_RNDIS_SetRxBuffer(&USBD_Device, UserRxBuffer);
   /* Prepare Out endpoint to receive next packet in current/new frame */
-  (void) USBD_LL_PrepareReceive(&USBD_Device,
-                         CDC_RNDIS_OUT_EP,
-                         (uint8_t*)(hcdc_cdc_rndis->RxBuffer),
-                         (uint16_t)hcdc_cdc_rndis->MaxPcktLen);
+
+  USBD_CDC_RNDIS_ReceivePacket (&USBD_Device);
+  /* USBD_CDC_RNDIS_SetRxBuffer replaces this internal call
+   *
+   * (void) USBD_LL_PrepareReceive(&USBD_Device,
+   *                        CDC_RNDIS_OUT_EP,
+   *                        (uint8_t*)(hcdc_cdc_rndis->RxBuffer),
+   *                        (uint16_t)hcdc_cdc_rndis->MaxPcktLen);
+  */
 
 
   UNUSED(Buf);
