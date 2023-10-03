@@ -34,8 +34,11 @@
 
 /* This header file is required by lwip. However it is not provided for the FreeRTOS port.
  * Therefore I am adding it here.
- * For FreeRTOS there is actually no content needed.
- * The only exception are the errno constants, but by configuration I am using the constants provided by FREERTOS internally.
+ * I am using errno constants by configuration provided by FREERTOS internally.
  */
+
+/* I still need rand() to fulfill LWIP_RAND
+ */
+#define LWIP_RAND rand
 
 #endif /* LWIP_ARCH_CC_H */
