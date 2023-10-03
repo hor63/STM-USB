@@ -119,6 +119,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+	CDC_RNDIS_StaticInit ();
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -152,12 +153,15 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 
   printf ("Hello world!\n");
+  printf ("rand() = %d\n",rand());
 
   /* Infinite loop */
   for(;;)
   {
     osDelay(2000);
     printf ("Hello again\n");
+	printf ("rand() = %d\n",rand());
+
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -172,6 +176,12 @@ void StartDefaultTask(void *argument)
 void StartTaskUSBReceive(void *argument)
 {
   /* USER CODE BEGIN StartTaskUSBReceive */
+
+	/*
+	 * The task should disappear in here for ever
+	 */
+	CDC_RNDIS_LWIPInputLoop ();
+
   /* Infinite loop */
   for(;;)
   {
