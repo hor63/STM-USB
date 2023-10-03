@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    usbd_cdc_rndis_if_template.h
+  * @file    usbd_cdc_rndis_if.h
   * @author  MCD Application Team
   * @brief   Header for usbd_cdc_rndis_if.c file.
   ******************************************************************************
@@ -55,6 +55,8 @@ extern USBD_CDC_RNDIS_ItfTypeDef                    USBD_CDC_RNDIS_fops;
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+void CDC_RNDIS_StaticInit ();
+void CDC_RNDIS_LWIPInputLoop ();
 
 #endif /* __USBD_CDC_RNDIS_IF_H */
 
