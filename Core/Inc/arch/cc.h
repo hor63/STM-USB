@@ -37,8 +37,13 @@
  * I am using errno constants by configuration provided by FREERTOS internally.
  */
 
+#include <inttypes.h>
+
+
 /* I still need rand() to fulfill LWIP_RAND
  */
 #define LWIP_RAND rand
+
+#define X8_F error
 
 #endif /* LWIP_ARCH_CC_H */
