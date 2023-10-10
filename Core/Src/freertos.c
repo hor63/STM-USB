@@ -25,8 +25,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usbd_cdc_rndis_if.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/lock.h>
 /* USER CODE END Includes */
 
@@ -152,16 +154,10 @@ void StartDefaultTask(void *argument)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
 
-  printf ("Hello world!\n");
-  printf ("rand() = %d\n",rand());
-
   /* Infinite loop */
   for(;;)
   {
     osDelay(2000);
-    printf ("Hello again\n");
-	printf ("rand() = %d\n",rand());
-
   }
   /* USER CODE END StartDefaultTask */
 }
