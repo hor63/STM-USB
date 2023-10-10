@@ -56,3 +56,6 @@ Debug
 
 #Backups by the code generator
 Backup/
+
+# Logs from the Single Wire Debug port saved by CubeIDE.
+SWV_export/
