@@ -32,6 +32,7 @@
 #include "lwip/tcpip.h"
 #include "lwip/pbuf.h"
 #include "lwip/dns.h"
+#include "lwip/apps/mdns.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -83,9 +84,15 @@ static QueueHandle_t inputLoopQueue = NULL;
 /* The netif representing the RNDIS interface */
 static struct netif rndisIF;
 
+#if LWIP_DHCP
 static struct dhcp dhcpRNDIS;
+#endif
+#if LWIP_AUTOIP
 static struct autoip autoipRNDIS;
+#endif
+#if LWIP_IPV6_DHCP6
 static struct dhcp6 dhcp6RNDIS;
+#endif
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -235,8 +242,8 @@ void CDC_RNDIS_LWIPInputLoop () {
 					) == pdTRUE) {
 
 				/* If the pbuf is NULL this is the indicator
-				 * that this queue message was not a receviced message,
-				 * but instead the initialialization of LWIP
+				 * that this queue message was not a received message,
+				 * but instead the initialization of LWIP
 				 * is being triggered.
 				 * tcpip_init must NOT be called from an ISR.
 				 * Therefore I am executing it from here.
@@ -248,8 +255,7 @@ void CDC_RNDIS_LWIPInputLoop () {
 					tcpip_init(tcpip_init_done,NULL);
 				} else {
 				/* Throw the pbuf to the LWIP task */
-//					printf("CDC_RNDIS_Itf_Receive: received %lu bytes from host\n",(uint32_t)queueItem.p->len);
-
+					printf("CDC_RNDIS_Itf_Receive: received %lu bytes from host\n",(uint32_t)queueItem.p->len);
 
 					tcpip_input(queueItem.p,&rndisIF);
 				}
@@ -267,21 +273,40 @@ static void tcpip_init_done(void *arg) {
 	netif_add_noaddr(&rndisIF, NULL, ethernetif_init, ethernet_input);
 
 	netif_set_default(&rndisIF);
-	netif_set_hostname(&rndisIF,"horOV");
+	netif_set_hostname(&rndisIF,LWIP_HOSTNAME);
 
 //	netif_set_link_up(&rndisIF);
 	netif_set_up(&rndisIF);
 
 	/* Startup DHCP and DHCP6 */
+#if LWIP_DHCP
 	dhcp_set_struct(&rndisIF,&dhcpRNDIS);
+#endif
+#if LWIP_AUTOIP
 	autoip_set_struct(&rndisIF, &autoipRNDIS);
+#endif
+#if LWIP_IPV6_DHCP6
 	dhcp6_set_struct(&rndisIF,&dhcp6RNDIS);
+#endif
 
+#if LWIP_DHCP
 	dhcp_start(&rndisIF);
+#endif
+#if LWIP_AUTOIP
 	autoip_start(&rndisIF);
+#endif
+#if LWIP_IPV6_DHCP6
 	dhcp6_enable_stateless(&rndisIF);
+#endif
 
+#if LWIP_MDNS_RESPONDER
+	mdns_resp_init();
+	mdns_resp_add_netif(&rndisIF, LWIP_HOSTNAME);
+#endif
+
+#if LWIP_DNS
 	dns_init();
+#endif
 }
 
 /**

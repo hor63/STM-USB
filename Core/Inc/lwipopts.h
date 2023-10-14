@@ -18,6 +18,8 @@
  * Infrastructure
  */
 
+#define LWIP_HOSTNAME "horOV"
+
 /*
  * NO_SYS
  */
@@ -34,6 +36,8 @@
 #define 	LWIP_SINGLE_NETIF   1
 
 #define 	LWIP_NETIF_HOSTNAME   1
+
+#define LWIP_NUM_NETIF_CLIENT_DATA      1
 
 /* *****************************************************************************
  * Protocols and protocol modules
@@ -120,13 +124,19 @@
  * DNS
  */
 
-#define 	LWIP_DNS   1
+#define 	LWIP_DNS   0
 
 #define LWIP_DNS_SECURE 0
 
 #define DNS_LOCAL_HOSTLIST_IS_DYNAMIC   1
 
 #define LWIP_DNS_SUPPORT_MDNS_QUERIES   1
+
+/*
+ * MDNS
+ */
+
+#define LWIP_MDNS_RESPONDER 1
 
 /* *****************************************************************************
  * Thread-safe APIs
@@ -170,7 +180,8 @@
 
 #define 	TCPIP_THREAD_NAME   "tcpip_thread"
 
-#define 	TCPIP_THREAD_STACKSIZE   (configMINIMAL_STACK_SIZE * 8)
+// 2K stack got the TCPIP stack
+#define 	TCPIP_THREAD_STACKSIZE   (configMINIMAL_STACK_SIZE * 16)
 
 #define 	TCPIP_THREAD_PRIO   2
 
@@ -276,8 +287,8 @@
 //#define 	IP6_FRAG_STATS   (LWIP_IPV6 && (LWIP_IPV6_FRAG || LWIP_IPV6_REASS))
 #define 	IP6_FRAG_STATS 0
 
-//#define 	MLD6_STATS   (LWIP_IPV6 && LWIP_IPV6_MLD)
-#define 	MLD6_STATS   0
+#define 	MLD6_STATS   (LWIP_IPV6 && LWIP_IPV6_MLD)
+// #define 	MLD6_STATS   0
 
 #define 	ND6_STATS   (LWIP_IPV6)
 
@@ -354,11 +365,16 @@
 
 #define 	AUTOIP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 
+// #define 	ACD_DEBUG LWIP_DBG_ON | LWIP_DBG_TRACE | LWIP_DBG_STATE
+#define 	ACD_DEBUG LWIP_DBG_OFF
+
 #define 	DNS_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 
 #define 	IP6_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 
 #define 	DHCP6_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+
+#define     MDNS_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 
 /*
  * Performance

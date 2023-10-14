@@ -44,6 +44,10 @@
  */
 #define LWIP_RAND rand
 
-#define X8_F error
+/*
+ * Replace the definition in lwip/arch.h.
+ * newlib does not support the printf length specifier "hh" for 8 bit integers. Only "h" for 16 (short) int.
+ */
+#define X8_F  "02" PRIx16
 
 #endif /* LWIP_ARCH_CC_H */
