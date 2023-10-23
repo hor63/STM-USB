@@ -14,11 +14,21 @@
 
 #include "FreeRTOSConfig.h"
 
+
+// Some basic stuff upfront:
+
+// When these addresses are defined they are used to initialize the interface.
+// If not IP_ANY (0.0.0.0) addresses are being used.
+#define FIX_IP_ADDRESS "192.168.203.23"
+#define FIX_IP_NETMASK "255.255.255.0"
+// #define FIX_IP_GATEWAY "192.168.203.1"
+
+#define LWIP_HOSTNAME "horOV"
+
 /* *****************************************************************************
  * Infrastructure
  */
 
-#define LWIP_HOSTNAME "horOV"
 
 /*
  * NO_SYS
@@ -60,48 +70,48 @@
 
 #define 	LWIP_ICMP   1
 
-#define LWIP_BROADCAST_PING             1
+#define LWIP_BROADCAST_PING             0
 
-#define LWIP_MULTICAST_PING             1
+#define LWIP_MULTICAST_PING             0
 
 /*
  * DHCP
  */
-#define 	LWIP_DHCP   1
+#define 	LWIP_DHCP   0
 
-#define LWIP_DHCP_DISCOVER_ADD_HOSTNAME 1
+#define LWIP_DHCP_DISCOVER_ADD_HOSTNAME 0
 
 /*
  * AUTOIP
  */
 
-#define 	LWIP_AUTOIP   1
+#define 	LWIP_AUTOIP   0
 
-#define 	LWIP_DHCP_AUTOIP_COOP   1
+#define 	LWIP_DHCP_AUTOIP_COOP   0
 
 #define 	LWIP_DHCP_AUTOIP_COOP_TRIES   5
 
 // ACD is required for autoip
-#define LWIP_ACD 1
+#define LWIP_ACD 0
 /*
  * IGMP
  */
 
-#define 	LWIP_IGMP   1
+#define 	LWIP_IGMP   0
 
 /*
  * NetBios responder
  */
 
-#define LWIP_NETBIOS_RESPOND_NAME_QUERY 1
+#define LWIP_NETBIOS_RESPOND_NAME_QUERY 0
 
 /*
  * IPV6
  */
 
-#define 	LWIP_IPV6   1
+#define 	LWIP_IPV6   0
 
-#define     LWIP_IPV6_DHCP6   1
+#define     LWIP_IPV6_DHCP6   0
 
 /* *****************************************************************************
  * Callback-style APIs
@@ -132,7 +142,7 @@
 
 #define 	LWIP_DNS   0
 
-#define LWIP_DNS_SECURE 1
+#define LWIP_DNS_SECURE 0
 
 #define DNS_LOCAL_HOSTLIST_IS_DYNAMIC   1
 
@@ -230,7 +240,7 @@
 
 #define 	MEM_ALIGNMENT   4
 
-#define MEM_SIZE                        4000
+#define MEM_SIZE                        1000
 
 /*
  * Internal memory pools
@@ -261,7 +271,7 @@
 
 #define 	LWIP_STATS   1
 
-#define 	LWIP_STATS_DISPLAY   1
+#define 	LWIP_STATS_DISPLAY   0
 
 #define 	LINK_STATS   1
 
@@ -304,14 +314,14 @@
  * Debug messages
  */
 
-#define LWIP_DEBUG 1
+// #define LWIP_DEBUG 1
 
 #define 	LWIP_DBG_MIN_LEVEL   LWIP_DBG_LEVEL_ALL
 
 #define 	LWIP_DBG_TYPES_ON   LWIP_DBG_ON
 
-//#define 	ETHARP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	ETHARP_DEBUG   LWIP_DBG_OFF
+#define 	ETHARP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+//#define 	ETHARP_DEBUG   LWIP_DBG_OFF
 
 #define 	NETIF_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 
@@ -325,14 +335,14 @@
 
 #define 	SOCKETS_DEBUG   LWIP_DBG_OFF
 
-// #define 	ICMP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	ICMP_DEBUG   LWIP_DBG_OFF
+#define 	ICMP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define 	ICMP_DEBUG   LWIP_DBG_OFF
 
-// #define 	ICMP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	ICMP_DEBUG   LWIP_DBG_OFF
+#define 	IGMP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define 	IGMP_DEBUG   LWIP_DBG_OFF
 
-// #define 	INET_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	INET_DEBUG   LWIP_DBG_OFF
+#define 	INET_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+//#define 	INET_DEBUG   LWIP_DBG_OFF
 
 #define 	IP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 // #define 	IP_DEBUG   LWIP_DBG_OFF
@@ -347,16 +357,16 @@
 // #define 	MEMP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 #define 	MEMP_DEBUG   LWIP_DBG_OFF
 
-// #define 	SYS_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	SYS_DEBUG   LWIP_DBG_OFF
+#define 	SYS_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define 	SYS_DEBUG   LWIP_DBG_OFF
 
 #define 	TIMERS_DEBUG   LWIP_DBG_OFF
 
-// #define 	TCP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	TCP_DEBUG   LWIP_DBG_OFF
+#define 	TCP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define 	TCP_DEBUG   LWIP_DBG_OFF
 
-// #define 	TCP_INPUT_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	TCP_INPUT_DEBUG   LWIP_DBG_OFF
+#define 	TCP_INPUT_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define 	TCP_INPUT_DEBUG   LWIP_DBG_OFF
 
 #define 	TCP_FR_DEBUG   LWIP_DBG_OFF
 
@@ -366,8 +376,8 @@
 
 #define 	TCP_WND_DEBUG   LWIP_DBG_OFF
 
-// #define 	TCP_OUTPUT_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	TCP_OUTPUT_DEBUG   LWIP_DBG_OFF
+#define 	TCP_OUTPUT_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define 	TCP_OUTPUT_DEBUG   LWIP_DBG_OFF
 
 #define 	TCP_RST_DEBUG   LWIP_DBG_OFF
 
@@ -375,8 +385,8 @@
 
 #define 	UDP_DEBUG   LWIP_DBG_OFF
 
-// #define 	TCPIP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	TCPIP_DEBUG   LWIP_DBG_OFF
+#define 	TCPIP_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define 	TCPIP_DEBUG   LWIP_DBG_OFF
 
 #define 	SLIP_DEBUG   LWIP_DBG_OFF
 
@@ -388,8 +398,8 @@
 // #define 	ACD_DEBUG LWIP_DBG_ON | LWIP_DBG_TRACE | LWIP_DBG_STATE
 #define 	ACD_DEBUG LWIP_DBG_OFF
 
-// #define 	DNS_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define 	DNS_DEBUG   LWIP_DBG_OFF
+#define 	DNS_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define 	DNS_DEBUG   LWIP_DBG_OFF
 
 #define 	IP6_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 //#define 	IP6_DEBUG   LWIP_DBG_OFF
@@ -397,8 +407,8 @@
 #define 	DHCP6_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 // #define 	DHCP6_DEBUG   LWIP_DBG_OFF
 
-// #define     MDNS_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
-#define     MDNS_DEBUG   LWIP_DBG_OFF
+#define     MDNS_DEBUG   LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
+// #define     MDNS_DEBUG   LWIP_DBG_OFF
 
 #define NETBIOS_DEBUG LWIP_DBG_ON | LWIP_DBG_STATE | LWIP_DBG_TRACE
 

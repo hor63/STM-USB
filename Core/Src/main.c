@@ -73,7 +73,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	srand(123457);
-	printf ("rand() = %d\n",rand());
+//	printf ("rand() = %d\n",rand());
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

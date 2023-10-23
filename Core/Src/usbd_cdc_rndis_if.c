@@ -129,11 +129,16 @@ static  err_t CDC_RNDIS_Itf_SendEthFrame (struct netif *netif, struct pbuf *p) {
 	// Leave space at the begin of the buffer for the RNDIS header
 	uint32_t bufPos = sizeof(USBD_CDC_RNDIS_PacketMsgTypeDef);
 	struct eth_hdr *ethhdr;
+	int i = 0;
 
 	while (hcdc->TxState != 0) {
 		/* Wait one tick, i.e. the shortest possible delay (no matter how long that is) */
-		LWIP_DEBUGF(IP_DEBUG | LWIP_DBG_TRACE,("CDC_RNDIS_Itf_SendEthFrame: Wait\n"));
 		vTaskDelay(1);
+		i++;
+		if (i >= 50) {
+			LWIP_DEBUGF(IP_DEBUG | LWIP_DBG_TRACE,("CDC_RNDIS_Itf_SendEthFrame: Waited 50ms, timeout. Send anyway.\n"));
+			hcdc->TxState = 0;
+		}
 	}
 
 	for (pBufChain = p; pBufChain != NULL;pBufChain=pBufChain->next) {
@@ -185,7 +190,9 @@ static err_t ethernetif_init(struct netif *netif)
    * is available...) */
   netif->output = etharp_output;
   netif->linkoutput = CDC_RNDIS_Itf_SendEthFrame;
+#if LWIP_IPV6
   netif->output_ip6 = ethip6_output;
+#endif
 
   /* initialize the hardware */
   /* set MAC hardware address length */
@@ -201,7 +208,9 @@ static err_t ethernetif_init(struct netif *netif)
 
   /* maximum transfer unit */
   netif->mtu = CDC_RNDIS_ETH_MTU;
+#if LWIP_IPV6
   netif->mtu6 = CDC_RNDIS_ETH_MTU;
+#endif
 
   /* device capabilities */
   /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
@@ -280,9 +289,29 @@ void CDC_RNDIS_LWIPInputLoop () {
 
 static void tcpip_init_done(void *arg) {
 
+	ip4_addr_t ipaddr;
+	ip4_addr_t netmask;
+	ip4_addr_t gateway;
+
+#if defined FIX_IP_ADDRESS
+	ipaddr.addr = ipaddr_addr(FIX_IP_ADDRESS);
+#else
+	ipaddr.addr = IPADDR_ANY;
+#endif
+#if defined FIX_IP_NETMASK
+	ipaddr.addr = ipaddr_addr(FIX_IP_NETMASK);
+#else
+	netmask.addr = IPADDR_ANY;
+#endif
+#if defined FIX_IP_GATEWAY
+	ipaddr.addr = ipaddr_addr(FIX_IP_GATEWAY);
+#else
+	gateway.addr = IPADDR_ANY;
+#endif
+
 	memset (&rndisIF,0,sizeof(rndisIF));
 	netif_init();
-	netif_add_noaddr(&rndisIF, NULL, ethernetif_init, ethernet_input);
+	netif_add (&rndisIF,&ipaddr,&netmask,&gateway, NULL, ethernetif_init, ethernet_input);
 
 	netif_set_default(&rndisIF);
 	netif_set_hostname(&rndisIF,LWIP_HOSTNAME);
