@@ -33,6 +33,8 @@
 #include "lwip/pbuf.h"
 #include "lwip/dns.h"
 #include "lwip/apps/mdns.h"
+#include "lwip/igmp.h"
+#include "lwip/apps/netbiosns.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -130,7 +132,7 @@ static  err_t CDC_RNDIS_Itf_SendEthFrame (struct netif *netif, struct pbuf *p) {
 
 	while (hcdc->TxState != 0) {
 		/* Wait one tick, i.e. the shortest possible delay (no matter how long that is) */
-		printf ("CDC_RNDIS_Itf_SendEthFrame: Wait\n");
+		LWIP_DEBUGF(IP_DEBUG | LWIP_DBG_TRACE,("CDC_RNDIS_Itf_SendEthFrame: Wait\n"));
 		vTaskDelay(1);
 	}
 
@@ -140,7 +142,7 @@ static  err_t CDC_RNDIS_Itf_SendEthFrame (struct netif *netif, struct pbuf *p) {
 		 * If the length of the pbuf fragments exceeds my send buffer flush it in between.
 		 */
 		if ((bufPos + pBufChain->len) > sizeof(UserTxBuffer)) {
-			printf ("Send partial frame len %lu= \n",bufPos);
+			//printf ("Send partial frame len %lu= \n",bufPos);
 			USBD_CDC_RNDIS_SetTxBuffer(&hUsbDeviceFS,UserTxBuffer,bufPos);
 			USBD_CDC_RNDIS_TransmitPacket(&hUsbDeviceFS);
 
@@ -150,13 +152,13 @@ static  err_t CDC_RNDIS_Itf_SendEthFrame (struct netif *netif, struct pbuf *p) {
 			}
 			bufPos = sizeof(USBD_CDC_RNDIS_PacketMsgTypeDef);
 		}
-		printf ("Copy pbuf len= %lu \n",(uint32_t)pBufChain->len);
+		//printf ("Copy pbuf len= %lu \n",(uint32_t)pBufChain->len);
 		memcpy (&UserTxBuffer[bufPos],pBufChain->payload,pBufChain->len);
 		bufPos += pBufChain->len;
 	}
-	printf ("CDC_RNDIS_Itf_SendEthFrame: Send frame len= %lu \n",bufPos);
+	LWIP_DEBUGF(IP_DEBUG | LWIP_DBG_TRACE,("CDC_RNDIS_Itf_SendEthFrame: Send frame len= %lu \n",bufPos));
     ethhdr = (struct eth_hdr *)p->payload;
-    LWIP_DEBUGF(ETHARP_DEBUG | LWIP_DBG_TRACE,
+    LWIP_DEBUGF(IP_DEBUG | LWIP_DBG_TRACE,
 	              ("CDC_RNDIS_Itf_SendEthFrame: dest:%"X16_F":%"X16_F":%"X16_F":%"X16_F":%"X16_F":%"X16_F", src:%"X16_F":%"X16_F":%"X16_F":%"X16_F":%"X16_F":%"X16_F", type:%"X16_F"\n",
 	               (unsigned short)ethhdr->dest.addr[0], (unsigned short)ethhdr->dest.addr[1], (unsigned short)ethhdr->dest.addr[2],
 	               (unsigned short)ethhdr->dest.addr[3], (unsigned short)ethhdr->dest.addr[4], (unsigned short)ethhdr->dest.addr[5],
@@ -203,7 +205,17 @@ static err_t ethernetif_init(struct netif *netif)
 
   /* device capabilities */
   /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
-  netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_ETHERNET | NETIF_FLAG_MLD6;
+  netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHERNET
+#if LWIP_ARP
+		  | NETIF_FLAG_ETHARP
+#endif
+#if LWIP_IPV6_MLD
+		  | NETIF_FLAG_MLD6
+#endif
+#if LWIP_IGMP
+		  | NETIF_FLAG_IGMP
+#endif
+		  ;
 
   return (err_t)ERR_OK;
 }
@@ -255,7 +267,7 @@ void CDC_RNDIS_LWIPInputLoop () {
 					tcpip_init(tcpip_init_done,NULL);
 				} else {
 				/* Throw the pbuf to the LWIP task */
-					printf("CDC_RNDIS_Itf_Receive: received %lu bytes from host\n",(uint32_t)queueItem.p->len);
+					// printf("CDC_RNDIS_Itf_Receive: received %lu bytes from host\n",(uint32_t)queueItem.p->len);
 
 					tcpip_input(queueItem.p,&rndisIF);
 				}
@@ -275,8 +287,13 @@ static void tcpip_init_done(void *arg) {
 	netif_set_default(&rndisIF);
 	netif_set_hostname(&rndisIF,LWIP_HOSTNAME);
 
-//	netif_set_link_up(&rndisIF);
+	netif_set_link_up(&rndisIF);
 	netif_set_up(&rndisIF);
+
+#if LWIP_IGMP
+	igmp_init();
+	igmp_start(&rndisIF);
+#endif
 
 	/* Startup DHCP and DHCP6 */
 #if LWIP_DHCP
@@ -307,6 +324,12 @@ static void tcpip_init_done(void *arg) {
 #if LWIP_DNS
 	dns_init();
 #endif
+
+#if LWIP_NETBIOS_RESPOND_NAME_QUERY
+	netbiosns_init();
+	netbiosns_set_name(rndisIF.hostname);
+#endif
+
 }
 
 /**
@@ -488,7 +511,7 @@ static int8_t CDC_RNDIS_Itf_TransmitCplt(uint8_t *Buf, uint32_t *Len, uint8_t ep
   UNUSED(Len);
   UNUSED(epnum);
 
-	printf ("CDC_RNDIS_Itf_TransmitCplt: Len= %lu \n",*Len);
+	// printf ("CDC_RNDIS_Itf_TransmitCplt: Len= %lu \n",*Len);
 
   return (0);
 }
