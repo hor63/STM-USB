@@ -294,17 +294,17 @@ static void tcpip_init_done(void *arg) {
 	ip4_addr_t gateway;
 
 #if defined FIX_IP_ADDRESS
-	ipaddr.addr = ipaddr_addr(FIX_IP_ADDRESS);
+	ip4addr_aton(FIX_IP_ADDRESS, &ipaddr);
 #else
 	ipaddr.addr = IPADDR_ANY;
 #endif
 #if defined FIX_IP_NETMASK
-	ipaddr.addr = ipaddr_addr(FIX_IP_NETMASK);
+	ip4addr_aton(FIX_IP_NETMASK, &netmask);
 #else
 	netmask.addr = IPADDR_ANY;
 #endif
 #if defined FIX_IP_GATEWAY
-	ipaddr.addr = ipaddr_addr(FIX_IP_GATEWAY);
+	ip4addr_aton(FIX_IP_GATEWAY, &gateway);
 #else
 	gateway.addr = IPADDR_ANY;
 #endif
