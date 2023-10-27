@@ -2,7 +2,7 @@
 /**
   ******************************************************************************
   * @file           : usbd_conf.h
-  * @version        : v2.0_Cube
+  * @version        : v3.0_Cube
   * @brief          : Header for usbd_conf.c file.
   ******************************************************************************
   * @attention
@@ -30,9 +30,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "main.h"
-#include "stm32l4xx.h"
-#include "stm32l4xx_hal.h"
+#include "stm32g0xx.h"
+#include "stm32g0xx_hal.h"
 
 /* USER CODE BEGIN INCLUDE */
 
@@ -53,6 +52,9 @@
   * @{
   */
 
+/* Private variables ---------------------------------------------------------*/
+/* USER CODE BEGIN PV */
+/* USER CODE END PV */
 /**
   * @}
   */
@@ -88,15 +90,12 @@
   * @{
   */
 
-/* Memory management macros */
-
 /* Memory management macros make sure to use static memory allocation */
-
 /** Alias for memory allocation. */
 #define USBD_malloc         (void *)USBD_static_malloc
 
 /** Alias for memory release. */
-#define USBD_free          USBD_static_free
+#define USBD_free           USBD_static_free
 
 /** Alias for memory set. */
 #define USBD_memset         memset

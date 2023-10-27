@@ -629,6 +629,19 @@ USBD_StatusTypeDef USBD_LL_DataOutStage(USBD_HandleTypeDef *pdev,
         (void)USBD_CtlSendStatus(pdev);
       }
     }
+    else
+    {
+#if 0
+      if (pdev->ep0_state == USBD_EP0_STATUS_OUT)
+      {
+        /*
+          * STATUS PHASE completed, update ep0_state to idle
+          */
+        pdev->ep0_state = USBD_EP0_IDLE;
+        (void)USBD_LL_StallEP(pdev, 0U);
+      }
+#endif
+    }
   }
   else
   {
@@ -712,6 +725,16 @@ USBD_StatusTypeDef USBD_LL_DataInStage(USBD_HandleTypeDef *pdev,
           (void)USBD_CtlReceiveStatus(pdev);
         }
       }
+    }
+    else
+    {
+#if 0
+      if ((pdev->ep0_state == USBD_EP0_STATUS_IN) ||
+          (pdev->ep0_state == USBD_EP0_IDLE))
+      {
+        (void)USBD_LL_StallEP(pdev, 0x80U);
+      }
+#endif
     }
 
     if (pdev->dev_test_mode != 0U)
@@ -839,11 +862,7 @@ USBD_StatusTypeDef USBD_LL_SetSpeed(USBD_HandleTypeDef *pdev,
 
 USBD_StatusTypeDef USBD_LL_Suspend(USBD_HandleTypeDef *pdev)
 {
-  if (pdev->dev_state != USBD_STATE_SUSPENDED)
-  {
-    pdev->dev_old_state = pdev->dev_state;
-  }
-
+  pdev->dev_old_state = pdev->dev_state;
   pdev->dev_state = USBD_STATE_SUSPENDED;
 
   return USBD_OK;
