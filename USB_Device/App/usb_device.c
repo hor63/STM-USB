@@ -2,7 +2,7 @@
 /**
   ******************************************************************************
   * @file           : usb_device.c
-  * @version        : v2.0_Cube
+  * @version        : v3.0_Cube
   * @brief          : This file implements the USB Device
   ******************************************************************************
   * @attention
@@ -50,9 +50,10 @@
 
 /* USER CODE END PFP */
 
+extern void Error_Handler(void);
 /* USB Device Core handle declaration. */
 USBD_HandleTypeDef hUsbDeviceFS;
-extern USBD_DescriptorsTypeDef FS_Desc;
+extern USBD_DescriptorsTypeDef CDC_Desc;
 
 /*
  * -- Insert your variables declaration here --
@@ -72,9 +73,9 @@ extern USBD_DescriptorsTypeDef FS_Desc;
   * Init USB device Library, add supported class and start the library
   * @retval None
   */
-void MX_USB_DEVICE_Init(void)
+void MX_USB_Device_Init(void)
 {
-  /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
+  /* USER CODE BEGIN USB_Device_Init_PreTreatment */
 
 	  /* Obtain the device descriptor and set bDeviceClass and bDeviceSubClass to 0.
 	   * CubeMX sets the class and subclass fixed to CDC-ACM on device level. This supersedes the class and subclass definition as RNDIS
@@ -83,7 +84,7 @@ void MX_USB_DEVICE_Init(void)
 	   * effective.
 	   */
 	  uint16_t lenDeviceDescr = 0;
-	  uint8_t * deviceDescr = FS_Desc.GetDeviceDescriptor(USBD_SPEED_FULL,&lenDeviceDescr);
+	  uint8_t * deviceDescr = CDC_Desc.GetDeviceDescriptor(USBD_SPEED_FULL,&lenDeviceDescr);
 	  deviceDescr[4] = 0; /*bDeviceClass*/
 	  deviceDescr[5] = 0; /*bDeviceSubClass*/
 
@@ -93,30 +94,25 @@ void MX_USB_DEVICE_Init(void)
  * My sequence below initializes the USB device with the RNDIS descriptor and RNDIS interface fops.
  */
 #if 0
-  /* USER CODE END USB_DEVICE_Init_PreTreatment */
-
+  /* USER CODE END USB_Device_Init_PreTreatment */
   /* Init Device Library, add supported class and start the library. */
-  if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK)
-  {
+  if (USBD_Init(&hUsbDeviceFS, &CDC_Desc, DEVICE_FS) != USBD_OK) {
     Error_Handler();
   }
-  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC) != USBD_OK)
-  {
+  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC) != USBD_OK) {
     Error_Handler();
   }
-  if (USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS) != USBD_OK)
-  {
+  if (USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS) != USBD_OK) {
     Error_Handler();
   }
-  if (USBD_Start(&hUsbDeviceFS) != USBD_OK)
-  {
+  if (USBD_Start(&hUsbDeviceFS) != USBD_OK) {
     Error_Handler();
   }
-  /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
+  /* USER CODE BEGIN USB_Device_Init_PostTreatment */
 #endif
 
 
-  if (USBD_Init(&hUsbDeviceFS, &FS_Desc, DEVICE_FS) != USBD_OK)
+  if (USBD_Init(&hUsbDeviceFS, &CDC_Desc, DEVICE_FS) != USBD_OK)
   {
     Error_Handler();
   }
@@ -133,7 +129,7 @@ void MX_USB_DEVICE_Init(void)
     Error_Handler();
   }
 
-  /* USER CODE END USB_DEVICE_Init_PostTreatment */
+  /* USER CODE END USB_Device_Init_PostTreatment */
 }
 
 /**

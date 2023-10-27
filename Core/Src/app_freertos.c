@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : freertos.c
+  * File Name          : app_freertos.c
   * Description        : Code for freertos applications
   ******************************************************************************
   * @attention
@@ -54,14 +54,14 @@ typedef StaticTask_t osStaticThreadDef_t;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
-uint32_t defaultTaskBuffer[ 256 ];
+uint32_t defaultTaskBuffer[ 128 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .cb_mem = &defaultTaskControlBlock,
-  .cb_size = sizeof(defaultTaskControlBlock),
   .stack_mem = &defaultTaskBuffer[0],
   .stack_size = sizeof(defaultTaskBuffer),
+  .cb_mem = &defaultTaskControlBlock,
+  .cb_size = sizeof(defaultTaskControlBlock),
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for taskUSBReceive */
@@ -70,11 +70,11 @@ uint32_t taskUSBReceiveBuffer[ 256 ];
 osStaticThreadDef_t taskUSBReceiveControlBlock;
 const osThreadAttr_t taskUSBReceive_attributes = {
   .name = "taskUSBReceive",
-  .cb_mem = &taskUSBReceiveControlBlock,
-  .cb_size = sizeof(taskUSBReceiveControlBlock),
   .stack_mem = &taskUSBReceiveBuffer[0],
   .stack_size = sizeof(taskUSBReceiveBuffer),
-  .priority = (osPriority_t) osPriorityLow,
+  .cb_mem = &taskUSBReceiveControlBlock,
+  .cb_size = sizeof(taskUSBReceiveControlBlock),
+  .priority = (osPriority_t) osPriorityNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -85,7 +85,6 @@ const osThreadAttr_t taskUSBReceive_attributes = {
 void StartDefaultTask(void *argument);
 void StartTaskUSBReceive(void *argument);
 
-extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -150,10 +149,7 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
-
   /* Infinite loop */
   for(;;)
   {
