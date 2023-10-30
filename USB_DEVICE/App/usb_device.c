@@ -35,8 +35,8 @@
 #include "usb_device.h"
 #include "usbd_core.h"
 // #include "usbd_desc.h"
-#include "usbd_cdc_rndis.h"
-#include "usbd_cdc_rndis_if.h"
+#include "usbd_cdc_ecm.h"
+#include "usbd_cdc_ecm_if.h"
 
 /* USER CODE END Includes */
 
@@ -120,11 +120,11 @@ void MX_USB_DEVICE_Init(void)
   {
     Error_Handler();
   }
-  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC_RNDIS) != USBD_OK)
+  if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC_ECM) != USBD_OK)
   {
     Error_Handler();
   }
-  if (USBD_CDC_RNDIS_RegisterInterface(&hUsbDeviceFS, &USBD_CDC_RNDIS_fops) != USBD_OK)
+  if (USBD_CDC_ECM_RegisterInterface(&hUsbDeviceFS, &USBD_CDC_ECM_fops) != USBD_OK)
   {
     Error_Handler();
   }

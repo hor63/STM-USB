@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "usbd_cdc_rndis_if.h"
+#include "usbd_cdc_ecm_if.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -121,7 +121,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-	CDC_RNDIS_StaticInit ();
+	CDC_ECM_StaticInit ();
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -176,7 +176,7 @@ void StartTaskUSBReceive(void *argument)
 	/*
 	 * The task should disappear in here for ever
 	 */
-	CDC_RNDIS_LWIPInputLoop ();
+	CDC_ECM_LWIPInputLoop ();
 
   /* Infinite loop */
   for(;;)

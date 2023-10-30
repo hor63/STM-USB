@@ -38,7 +38,7 @@
 #include "stm32l4xx_hal.h"
 #include "usbd_def.h"
 #include "usbd_core.h"
-#include "usbd_cdc_rndis.h"
+#include "usbd_cdc_ecm.h"
 
 /* USER CODE END Includes */
 
@@ -54,7 +54,7 @@
  * Rename USBD_CDC_HandleTypeDef to USBD_CDC_RNDIS_HandleTypeDef to provide the correct size of
  * the static array.
  */
-#define USBD_CDC_HandleTypeDef USBD_CDC_RNDIS_HandleTypeDef
+#define USBD_CDC_HandleTypeDef USBD_CDC_ECM_HandleTypeDef
 /* USER CODE END PV */
 
 PCD_HandleTypeDef hpcd_USB_FS;
