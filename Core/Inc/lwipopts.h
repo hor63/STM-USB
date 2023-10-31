@@ -262,7 +262,7 @@
  * Assertions
  */
 
-#define 	LWIP_NOASSERT
+// #define 	LWIP_NOASSERT
 
 
 /*
@@ -315,7 +315,7 @@
  */
 
 // Comment define out to disable debug prints. Setting it to 0 does not suffice
-// #define LWIP_DEBUG 1
+#define LWIP_DEBUG 1
 
 #define 	LWIP_DBG_MIN_LEVEL   LWIP_DBG_LEVEL_ALL
 
