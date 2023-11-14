@@ -36,6 +36,9 @@
 
 /* USER CODE BEGIN INCLUDE */
 
+// I want to be able to returning the MAC address string to the host.
+#define USBD_SUPPORT_USER_STRING_DESC 1U
+
 /* USER CODE END INCLUDE */
 
 /** @addtogroup USBD_OTG_DRIVER
